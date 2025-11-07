@@ -1,0 +1,61 @@
+{
+  "name": "@umituz/react-native-charts",
+  "version": "1.0.0",
+  "description": "High-performance charting library for React Native with Victory Native XL, Reanimated v3, and theme integration",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "lint": "tsc --noEmit",
+    "clean": "rm -rf lib",
+    "prebuild": "npm run clean",
+    "prepublishOnly": "npm run build",
+    "version:patch": "npm version patch -m 'chore: release v%s'",
+    "version:minor": "npm version minor -m 'chore: release v%s'",
+    "version:major": "npm version major -m 'chore: release v%s'"
+  },
+  "keywords": [
+    "react-native",
+    "charts",
+    "victory-native",
+    "data-visualization",
+    "line-chart",
+    "bar-chart",
+    "pie-chart",
+    "area-chart"
+  ],
+  "author": "Ümit UZ <umit@umituz.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/umituz/react-native-charts"
+  },
+  "peerDependencies": {
+    "react": ">=18.2.0",
+    "react-native": ">=0.74.0",
+    "victory-native": "*",
+    "react-native-reanimated": ">=3.0.0",
+    "@umituz/react-native-design-system": "*"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.45",
+    "@types/react-native": "^0.73.0",
+    "react": "^18.2.0",
+    "react-native": "^0.74.0",
+    "typescript": "^5.3.3",
+    "victory-native": "*",
+    "react-native-reanimated": "^3.10.1",
+    "@umituz/react-native-design-system": "*"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "lib",
+    "src",
+    "README.md",
+    "LICENSE"
+  ]
+}
+
