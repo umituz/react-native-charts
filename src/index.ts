@@ -49,6 +49,11 @@ export {
   fillMissingDates,
 } from './infrastructure/utils/dataFormatter';
 export {
+  calculateMaxValue,
+  calculateMaxValueFromGrouped,
+  calculateBarHeight,
+} from './infrastructure/utils/chartScaleUtils';
+export {
   COLOR_PALETTES,
   generateColors,
   generateGradient,
@@ -63,6 +68,10 @@ export type { UseChartAnimationReturn } from './presentation/hooks/useChartAnima
 export { useChartAnimation } from './presentation/hooks/useChartAnimation';
 export type { UseChartDataReturn } from './presentation/hooks/useChartData';
 export { useChartData } from './presentation/hooks/useChartData';
+export { useBarChartData } from './presentation/hooks/useBarChartData';
+export { useBarChartColors } from './presentation/hooks/useBarChartColors';
+export { useBarChartScale } from './presentation/hooks/useBarChartScale';
+export { useBarChartLegend } from './presentation/hooks/useBarChartLegend';
 
 // Presentation components
 export type { LineChartProps } from './presentation/components/LineChart';

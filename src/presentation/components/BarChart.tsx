@@ -1,21 +1,32 @@
 /**
  * Bar Chart Component
  *
- * Victory Native XL bar chart with theme integration.
+ * Pure React Native bar chart with theme integration.
  * Supports single and grouped bar charts with rounded corners.
+ * No external chart library dependencies - uses only React Native View components.
+ * 
+ * Architecture: SOLID, DRY, KISS principles
+ * - Single Responsibility: Each component has one clear purpose
+ * - Open/Closed: Extensible through props and config
+ * - Liskov Substitution: Components are interchangeable
+ * - Interface Segregation: Small, focused interfaces
+ * - Dependency Inversion: Depends on abstractions (hooks, utils)
  */
 
 import React, { useMemo } from 'react';
 import { View, StyleSheet, type StyleProp, type ViewStyle, type DimensionValue } from 'react-native';
-import { CartesianChart, Bar } from 'victory-native';
 import { useAppDesignTokens } from '@umituz/react-native-design-system';
 import { useChartTheme } from '../hooks/useChartTheme';
 import type { ChartDataPoint, ChartSeries, GroupedBarDataPoint } from '../../domain/entities/ChartData';
 import type { ChartConfig } from '../../domain/entities/ChartConfig';
 import { LegendPosition } from '../../domain/entities/ChartTypes';
 import { DEFAULT_BAR_CHART_CONFIG } from '../../infrastructure/config/defaultConfig';
-import { generateColors } from '../../infrastructure/utils/colorUtils';
 import { ChartLegend } from './ChartLegend';
+import { BarChartBars } from './BarChartBars';
+import { useBarChartData } from '../hooks/useBarChartData';
+import { useBarChartColors } from '../hooks/useBarChartColors';
+import { useBarChartScale } from '../hooks/useBarChartScale';
+import { useBarChartLegend } from '../hooks/useBarChartLegend';
 
 export interface BarChartProps {
   data: ChartDataPoint[] | ChartSeries[] | GroupedBarDataPoint[];
@@ -38,7 +49,6 @@ export const BarChart: React.FC<BarChartProps> = ({
   showLegend = false,
   legendLabels,
 }) => {
-  const tokens = useAppDesignTokens();
   const chartTheme = useChartTheme();
 
   const chartConfig = useMemo(() => ({
@@ -46,55 +56,38 @@ export const BarChart: React.FC<BarChartProps> = ({
     ...config,
   }), [config]);
 
-  // Check if this is a grouped bar chart
-  const isGroupedBar = useMemo(() => {
-    return Array.isArray(yKeys) && yKeys.length > 0;
-  }, [yKeys]);
+  // Data transformation
+  const { chartData, isGroupedBar, isMultiSeries } = useBarChartData({
+    data,
+    yKeys,
+  });
 
-  // Check if this is a multi-series chart (ChartSeries[])
-  const isMultiSeries = useMemo(() => {
-    return !isGroupedBar && Array.isArray(data) && data.length > 0 && 'data' in data[0];
-  }, [data, isGroupedBar]);
+  // Color calculation
+  const colors = useBarChartColors({
+    config: chartConfig,
+    isGroupedBar,
+    isMultiSeries,
+    yKeys,
+    data: isMultiSeries ? (data as ChartSeries[]) : undefined,
+  });
 
-  // Prepare chart data
-  const chartData = useMemo(() => {
-    if (isGroupedBar) {
-      return data as GroupedBarDataPoint[];
-    }
-    if (isMultiSeries) {
-      return (data as ChartSeries[])[0].data;
-    }
-    return data as ChartDataPoint[];
-  }, [data, isGroupedBar, isMultiSeries]);
+  // Scale calculation
+  const chartHeight = typeof height === 'number' ? height - 60 : 200;
+  const { maxValue, barMaxHeight } = useBarChartScale({
+    chartData,
+    isGroupedBar,
+    yKeys,
+    chartHeight,
+  });
 
-  // Determine yKeys for CartesianChart
-  const chartYKeys = useMemo(() => {
-    if (isGroupedBar && yKeys) {
-      return yKeys;
-    }
-    return ['y'];
-  }, [isGroupedBar, yKeys]);
-
-  // Prepare colors
-  const colors = useMemo(() => {
-    if (chartConfig.colors) return chartConfig.colors;
-    if (isGroupedBar && yKeys) {
-      return generateColors(yKeys.length);
-    }
-    if (isMultiSeries) {
-      return generateColors((data as ChartSeries[]).length);
-    }
-    return [chartTheme.primary];
-  }, [chartConfig.colors, isGroupedBar, isMultiSeries, data, yKeys, chartTheme.primary]);
-
-  // Prepare legend items for grouped bars
-  const legendItems = useMemo(() => {
-    if (!showLegend || !isGroupedBar || !yKeys) return [];
-    return yKeys.map((key, index) => ({
-      label: legendLabels?.[key] || key,
-      color: colors[index] || chartTheme.primary,
-    }));
-  }, [showLegend, isGroupedBar, yKeys, legendLabels, colors, chartTheme.primary]);
+  // Legend preparation
+  const legendItems = useBarChartLegend({
+    showLegend,
+    isGroupedBar,
+    yKeys,
+    legendLabels,
+    colors,
+  });
 
   return (
     <View style={[styles.container, { width, height }, style]}>
@@ -106,57 +99,18 @@ export const BarChart: React.FC<BarChartProps> = ({
           style={styles.legend}
         />
       )}
-      <CartesianChart
-        data={chartData}
-        xKey="x"
-        yKeys={chartYKeys}
-        domainPadding={{ left: 50, right: 50, top: 30 }}
-        axisOptions={{
-          font: tokens.typography.bodyMedium.fontFamily,
-          labelColor: chartTheme.axisColor,
-          lineColor: chartTheme.gridColor,
-        }}
-      >
-        {({ points, chartBounds }) => {
-          if (isGroupedBar && yKeys) {
-            // Render multiple bars for grouped chart
-            return (
-              <>
-                {yKeys.map((yKey, index) => {
-                  const barPoints = points[yKey as keyof typeof points];
-                  if (!barPoints) return null;
-                  return (
-                    <Bar
-                      key={yKey}
-                      points={barPoints as any}
-                      chartBounds={chartBounds}
-                      color={colors[index] || chartTheme.primary}
-                      roundedCorners={{
-                        topLeft: chartConfig.barRadius || 4,
-                        topRight: chartConfig.barRadius || 4,
-                      }}
-                      animate={{ type: 'timing', duration: chartConfig.animation?.duration || 800 }}
-                    />
-                  );
-                })}
-              </>
-            );
-          }
-          // Single bar chart
-          return (
-            <Bar
-              points={points.y}
-              chartBounds={chartBounds}
-              color={colors[0]}
-              roundedCorners={{
-                topLeft: chartConfig.barRadius || 4,
-                topRight: chartConfig.barRadius || 4,
-              }}
-              animate={{ type: 'timing', duration: chartConfig.animation?.duration || 800 }}
-            />
-          );
-        }}
-      </CartesianChart>
+      <View style={[styles.chart, { height: chartHeight }]}>
+        <BarChartBars
+          chartData={chartData}
+          isGroupedBar={isGroupedBar}
+          yKeys={yKeys}
+          colors={colors}
+          maxValue={maxValue}
+          barMaxHeight={barMaxHeight}
+          borderRadius={chartConfig.barRadius || 4}
+          axisColor={chartTheme.axisColor}
+        />
+      </View>
     </View>
   );
 };
@@ -167,5 +121,9 @@ const styles = StyleSheet.create({
   },
   legend: {
     marginBottom: 12,
+  },
+  chart: {
+    width: '100%',
+    paddingTop: 20,
   },
 });
