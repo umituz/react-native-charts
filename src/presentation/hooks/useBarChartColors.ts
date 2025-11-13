@@ -28,14 +28,17 @@ export const useBarChartColors = ({
   const chartTheme = useChartTheme();
 
   return useMemo(() => {
-    if (config.colors) return config.colors;
-    if (isGroupedBar && yKeys) {
+    if (config.colors && config.colors.length > 0) {
+      return config.colors;
+    }
+    if (isGroupedBar && yKeys && yKeys.length > 0) {
       return generateColors(yKeys.length);
     }
-    if (isMultiSeries && data) {
+    if (isMultiSeries && data && data.length > 0) {
       return generateColors(data.length);
     }
-    return [chartTheme.primary];
+    // Always return at least one color
+    return [chartTheme.primary || '#000000'];
   }, [config.colors, isGroupedBar, isMultiSeries, data, yKeys, chartTheme.primary]);
 };
 

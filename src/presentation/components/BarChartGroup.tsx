@@ -47,11 +47,12 @@ export const BarChartGroup: React.FC<BarChartGroupProps> = ({
 
             const barHeight = calculateBarHeight(value, maxValue, barMaxHeight);
 
+            const color = colors[yIndex] || colors[0] || '#000000';
             return (
               <BarChartBar
                 key={yKey}
                 height={barHeight}
-                color={colors[yIndex] || colors[0]}
+                color={color}
                 borderRadius={borderRadius}
                 marginHorizontal={2}
                 width={undefined} // Use flex
@@ -67,12 +68,13 @@ export const BarChartGroup: React.FC<BarChartGroupProps> = ({
   // Single bar
   const value = (point as ChartDataPoint).y;
   const barHeight = calculateBarHeight(value, maxValue, barMaxHeight);
+  const color = colors[0] || '#000000';
 
   return (
     <View style={styles.barGroup}>
       <BarChartBar
         height={barHeight}
-        color={colors[0]}
+        color={color}
         borderRadius={borderRadius}
         width="80%"
       />

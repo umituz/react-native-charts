@@ -71,6 +71,14 @@ export const BarChart: React.FC<BarChartProps> = ({
     data: isMultiSeries ? (data as ChartSeries[]) : undefined,
   });
 
+  // Ensure colors array is never empty
+  const safeColors = useMemo(() => {
+    if (!colors || colors.length === 0) {
+      return [chartTheme.primary || '#000000'];
+    }
+    return colors;
+  }, [colors, chartTheme.primary]);
+
   // Scale calculation
   const chartHeight = typeof height === 'number' ? height - 60 : 200;
   const { maxValue, barMaxHeight } = useBarChartScale({
@@ -86,7 +94,7 @@ export const BarChart: React.FC<BarChartProps> = ({
     isGroupedBar,
     yKeys,
     legendLabels,
-    colors,
+    colors: safeColors,
   });
 
   return (
@@ -104,11 +112,11 @@ export const BarChart: React.FC<BarChartProps> = ({
           chartData={chartData}
           isGroupedBar={isGroupedBar}
           yKeys={yKeys}
-          colors={colors}
+          colors={safeColors}
           maxValue={maxValue}
           barMaxHeight={barMaxHeight}
           borderRadius={chartConfig.barRadius || 4}
-          axisColor={chartTheme.axisColor}
+          axisColor={chartTheme.axisColor || '#000000'}
         />
       </View>
     </View>

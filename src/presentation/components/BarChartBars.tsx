@@ -31,7 +31,12 @@ export const BarChartBars: React.FC<BarChartBarsProps> = ({
   borderRadius,
   axisColor,
 }) => {
-  if (chartData.length === 0) {
+  if (!chartData || chartData.length === 0) {
+    return <BarChartEmptyState />;
+  }
+
+  // Ensure colors array is not empty
+  if (!colors || colors.length === 0) {
     return <BarChartEmptyState />;
   }
 
