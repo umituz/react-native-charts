@@ -37,9 +37,18 @@ export interface PieChartSegment {
 }
 
 /**
+ * Grouped bar chart data point
+ * Multiple y values for grouped bars (e.g., { x: 'Jan', completed: 5, started: 10 })
+ */
+export interface GroupedBarDataPoint extends Record<string, unknown> {
+  x: number | string;
+  [yKey: string]: number | string | unknown; // Dynamic y keys (e.g., 'completed', 'started')
+}
+
+/**
  * Generic chart data (union type)
  */
-export type ChartData = ChartDataPoint[] | ChartSeries[] | PieChartSegment[];
+export type ChartData = ChartDataPoint[] | ChartSeries[] | PieChartSegment[] | GroupedBarDataPoint[];
 
 /**
  * Data validation utilities

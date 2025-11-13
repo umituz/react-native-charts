@@ -16,7 +16,7 @@
  */
 
 // Domain entities
-export type { ChartDataPoint, ChartSeries, PieChartSegment, ChartData } from './domain/entities/ChartData';
+export type { ChartDataPoint, ChartSeries, PieChartSegment, GroupedBarDataPoint, ChartData } from './domain/entities/ChartData';
 export { ChartDataUtils } from './domain/entities/ChartData';
 export type { ChartConfig, AxisConfig, LegendConfig, AnimationConfig, TooltipConfig, ChartDimensions } from './domain/entities/ChartConfig';
 export { ChartType, InterpolationType, AnimationType, LegendPosition, AxisPosition } from './domain/entities/ChartTypes';
