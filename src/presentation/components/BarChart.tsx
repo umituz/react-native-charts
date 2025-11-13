@@ -12,6 +12,7 @@ import { useAppDesignTokens } from '@umituz/react-native-design-system';
 import { useChartTheme } from '../hooks/useChartTheme';
 import type { ChartDataPoint, ChartSeries, GroupedBarDataPoint } from '../../domain/entities/ChartData';
 import type { ChartConfig } from '../../domain/entities/ChartConfig';
+import { LegendPosition } from '../../domain/entities/ChartTypes';
 import { DEFAULT_BAR_CHART_CONFIG } from '../../infrastructure/config/defaultConfig';
 import { generateColors } from '../../infrastructure/utils/colorUtils';
 import { ChartLegend } from './ChartLegend';
@@ -100,7 +101,7 @@ export const BarChart: React.FC<BarChartProps> = ({
       {showLegend && legendItems.length > 0 && (
         <ChartLegend
           items={legendItems}
-          position={chartConfig.legend?.position || 'top'}
+          position={chartConfig.legend?.position || LegendPosition.TOP}
           itemGap={chartConfig.legend?.itemGap || 16}
           style={styles.legend}
         />
