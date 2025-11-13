@@ -8,7 +8,7 @@
 import React from 'react';
 import { View, StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
 import { AtomicText, useAppDesignTokens } from '@umituz/react-native-design-system';
-import type { LegendPosition } from '../../domain/entities/ChartTypes';
+import { LegendPosition } from '../../domain/entities/ChartTypes';
 
 export interface LegendItem {
   label: string;
@@ -24,13 +24,13 @@ export interface ChartLegendProps {
 
 export const ChartLegend: React.FC<ChartLegendProps> = ({
   items,
-  position = 'bottom',
+  position = LegendPosition.BOTTOM,
   itemGap = 16,
   style,
 }) => {
   const tokens = useAppDesignTokens();
 
-  const isHorizontal = position === 'top' || position === 'bottom';
+  const isHorizontal = position === LegendPosition.TOP || position === LegendPosition.BOTTOM;
 
   return (
     <View
