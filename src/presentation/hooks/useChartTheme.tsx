@@ -11,33 +11,40 @@ import type { IChartTheme } from '../../domain/interfaces/IChartTheme';
 
 export const useChartTheme = (): IChartTheme => {
   const tokens = useAppDesignTokens();
+  const colors = tokens?.colors || {};
 
   return useMemo<IChartTheme>(
     () => ({
-      primary: tokens.colors.primary,
-      secondary: tokens.colors.secondary,
-      success: tokens.colors.success,
-      warning: tokens.colors.warning,
-      error: tokens.colors.error,
+      primary: colors.primary || '#000000',
+      secondary: colors.secondary || colors.primary || '#000000',
+      success: colors.success || colors.primary || '#10B981',
+      warning: colors.warning || colors.primary || '#F59E0B',
+      error: colors.error || colors.primary || '#EF4444',
 
-      axisColor: tokens.colors.textSecondary,
-      gridColor: tokens.colors.border,
-      labelColor: tokens.colors.textPrimary,
-      tooltipBackground: tokens.colors.surface,
-      tooltipText: tokens.colors.textPrimary,
+      axisColor: colors.textSecondary || colors.textPrimary || '#666666',
+      gridColor: colors.border || colors.borderLight || '#E0E0E0',
+      labelColor: colors.textPrimary || '#000000',
+      tooltipBackground: colors.surface || colors.backgroundPrimary || '#FFFFFF',
+      tooltipText: colors.textPrimary || '#000000',
 
       gradients: {
-        primary: [tokens.colors.primary, tokens.colors.secondary],
-        secondary: [tokens.colors.secondary, tokens.colors.primary],
+        primary: [
+          colors.primary || '#000000',
+          colors.secondary || colors.primary || '#000000',
+        ],
+        secondary: [
+          colors.secondary || colors.primary || '#000000',
+          colors.primary || '#000000',
+        ],
         multiColor: [
-          tokens.colors.primary,
-          tokens.colors.secondary,
-          tokens.colors.success,
-          tokens.colors.warning,
-          tokens.colors.error,
+          colors.primary || '#000000',
+          colors.secondary || colors.primary || '#000000',
+          colors.success || colors.primary || '#10B981',
+          colors.warning || colors.primary || '#F59E0B',
+          colors.error || colors.primary || '#EF4444',
         ],
       },
     }),
-    [tokens.colors]
+    [colors]
   );
 };

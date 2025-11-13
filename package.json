@@ -1,6 +1,6 @@
 {
   "name": "@umituz/react-native-charts",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Pure React Native charting library with theme integration. No external chart dependencies - uses only React Native View components.",
   "main": "./src/index.ts",
   "types": "./src/index.ts",
